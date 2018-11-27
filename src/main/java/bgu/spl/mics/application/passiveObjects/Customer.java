@@ -10,36 +10,51 @@ import java.util.List;
  */
 public class Customer {
 
+	private int id;
+	private  String name;
+	private String address;
+	private int distance;
+	private List<OrderReceipt> customerReceiptList;
+	private  int creditNumber;
+	private int availableCreditAmount;
+
+	public Customer(int id,String name, String address, int distance,List<OrderReceipt> customerReceiptList, int creditNumber,int availableCreditAmount){
+		this.id=id;
+		this.name=name;
+		this.address=address;
+		this.distance=distance;
+		this.customerReceiptList=customerReceiptList;
+		this.creditNumber=creditNumber;
+		this.availableCreditAmount=availableCreditAmount;
+	}
+
+
 	/**
      * Retrieves the name of the customer.
      */
 	public String getName() {
-		// TODO Implement this
-		return null;
+		return name;
 	}
 
 	/**
      * Retrieves the ID of the customer  . 
      */
 	public int getId() {
-		// TODO Implement this
-		return 0;
+		return id;
 	}
 	
 	/**
      * Retrieves the address of the customer.  
      */
 	public String getAddress() {
-		// TODO Implement this
-		return null;
+		return address;
 	}
 	
 	/**
      * Retrieves the distance of the customer from the store.  
      */
 	public int getDistance() {
-		// TODO Implement this
-		return 0;
+		return distance;
 	}
 
 	
@@ -49,8 +64,7 @@ public class Customer {
      * @return A list of receipts.
      */
 	public List<OrderReceipt> getCustomerReceiptList() {
-		// TODO Implement this
-		return null;
+		return customerReceiptList;
 	}
 	
 	/**
@@ -59,16 +73,14 @@ public class Customer {
      * @return Amount of money left.   
      */
 	public int getAvailableCreditAmount() {
-		// TODO Implement this
-		return 0;
+		return availableCreditAmount;
 	}
 	
 	/**
      * Retrieves this customers credit card serial number.    
      */
 	public int getCreditNumber() {
-		// TODO Implement this
-		return 0;
+		return creditNumber;
 	}
-	
+
 }

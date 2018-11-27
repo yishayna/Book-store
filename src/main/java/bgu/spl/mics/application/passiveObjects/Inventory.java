@@ -14,12 +14,21 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class Inventory {
 
+	private BookInventoryInfo [] inventoryInfo;
+	private static Inventory instance = null;
+
+	private Inventory(){
+		this.inventoryInfo=null;
+	}
+
 	/**
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
-		//TODO: Implement this
-		return null;
+		if(instance == null) {
+			instance = new Inventory();
+		}
+		return instance;
 	}
 	
 	/**
@@ -30,9 +39,8 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
-		
+		this.inventoryInfo=inventory;
 	}
-	
 	/**
      * Attempts to take one book from the store.
      * <p>
@@ -42,8 +50,15 @@ public class Inventory {
      * 			second should reduce by one the number of books of the desired type.
      */
 	public OrderResult take (String book) {
-		
-		return null;
+		for (BookInventoryInfo b:inventoryInfo) {
+			if(b.getBookTitle().equals(book)){
+				if (b.getAmountInInventory()>0){
+					b.reduceAmount();
+					return OrderResult.SUCCESSFULLY_TAKEN;
+				}
+			}
+		}
+		return OrderResult.NOT_IN_STOCK;
 	}
 	
 	
@@ -55,8 +70,14 @@ public class Inventory {
      * @return the price of the book if it is available, -1 otherwise.
      */
 	public int checkAvailabiltyAndGetPrice(String book) {
-		//TODO: Implement this
-		return -1;
+		for (BookInventoryInfo b : inventoryInfo) {
+			if (b.getBookTitle().equals(book)) {
+				if (b.getAmountInInventory() > 0) {
+					return b.getPrice();
+				}
+			}
+		}
+		return  -1;
 	}
 	
 	/**
@@ -70,4 +91,5 @@ public class Inventory {
 	public void printInventoryToFile(String filename){
 		//TODO: Implement this
 	}
+
 }
