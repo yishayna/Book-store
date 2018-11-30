@@ -1,5 +1,12 @@
 package bgu.spl.mics;
 
+import javafx.util.Pair;
+
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
  * Write your implementation here!
@@ -7,47 +14,67 @@ package bgu.spl.mics;
  */
 public class MessageBusImpl implements MessageBus {
 
-	@Override
+	private static MessageBusImpl instance = null;
+	private ConcurrentHashMap <MicroService, Pair<LinkedBlockingQueue<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> serviceQueue;
+	private ConcurrentHashMap <Event,Future> future;
+
+	private MessageBusImpl(){
+		this.serviceQueue=new ConcurrentHashMap<>();
+		this.future=new ConcurrentHashMap<>();
+	}
+
+	public static MessageBusImpl getInstance() {
+		if(instance == null) {
+			instance = new MessageBusImpl();
+		}
+		return instance;
+	}
+
+
+	@Override	//Done
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		// TODO Auto-generated method stub
-
+		serviceQueue.get(m).getValue().add(type);
 	}
 
-	@Override
+	@Override	//Done
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		// TODO Auto-generated method stub
-
+		serviceQueue.get(m).getKey().add(type);
 	}
 
-	@Override
+	@Override	// TO DO: we need to notify the Message-Bus that the event was handled
 	public <T> void complete(Event<T> e, T result) {
-		// TODO Auto-generated method stub
+		future.get(e).resolve(result);
 
 	}
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		// TODO Auto-generated method stub
+		for( Pair p:serviceQueue.values()){
+			if (p.getValue().equals(b)){
+
+			}
+
+		}
 
 	}
 
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	@Override	//Done
 	public void register(MicroService m) {
-		// TODO Auto-generated method stub
-
+		Vector<Class<? extends Event>> events=new Vector<>();
+		LinkedBlockingQueue<Class<? extends Broadcast>> broadcasts =new LinkedBlockingQueue<>();
+		Pair<LinkedBlockingQueue<Class<? extends Broadcast>>,Vector<Class<? extends Event>> > pair=new Pair<>(broadcasts,events);
+		serviceQueue.put(m, pair);
 	}
 
-	@Override
+	@Override	//Done
 	public void unregister(MicroService m) {
-		// TODO Auto-generated method stub
-
+		serviceQueue.remove(m);
 	}
 
 	@Override

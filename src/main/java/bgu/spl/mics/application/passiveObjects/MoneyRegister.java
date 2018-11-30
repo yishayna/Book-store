@@ -1,6 +1,10 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.Vector;
 
 /**
  * Passive object representing the store finance management. 
@@ -12,30 +16,44 @@ package bgu.spl.mics.application.passiveObjects;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class MoneyRegister {
-	
+
+	private static MoneyRegister instance = null;
+	private Vector<OrderReceipt> listOfReceipt;
+
+	private MoneyRegister(){
+		listOfReceipt=null;
+	}
+
 	/**
      * Retrieves the single instance of this class.
      */
 	public static MoneyRegister getInstance() {
-		//TODO: Implement this
-		return null;
+		if(instance == null) {
+			instance = new MoneyRegister();
+		}
+		return instance;
 	}
-	
+
+
+
 	/**
      * Saves an order receipt in the money register.
      * <p>   
      * @param r		The receipt to save in the money register.
      */
 	public void file (OrderReceipt r) {
-		//TODO: Implement this.
+		listOfReceipt.add(r);
 	}
 	
 	/**
      * Retrieves the current total earnings of the store.  
      */
 	public int getTotalEarnings() {
-		//TODO: Implement this
-		return 0;
+		int sum=0;
+		for (OrderReceipt o:listOfReceipt) {
+			sum=sum+o.getPrice();
+		}
+		return sum;
 	}
 	
 	/**
@@ -44,15 +62,28 @@ public class MoneyRegister {
      * @param amount 	amount to charge
      */
 	public void chargeCreditCard(Customer c, int amount) {
-		// TODO Implement this
+		//TODO: Implement this
 	}
-	
+
+	public Vector<OrderReceipt> getOrderReceipt(){
+		return listOfReceipt;
+	}
+
 	/**
      * Prints to a file named @filename a serialized object List<OrderReceipt> which holds all the order receipts 
      * currently in the MoneyRegister
      * This method is called by the main method in order to generate the output.. 
      */
 	public void printOrderReceipts(String filename) {
-		//TODO: Implement this
+		//check if the function prints correctly
+		try{
+			File file=new File(filename);
+			FileOutputStream fos=new FileOutputStream(file);
+			ObjectOutputStream oos=new ObjectOutputStream(fos);
+			oos.writeObject(listOfReceipt);
+			oos.flush();
+			oos.close();
+			fos.close();
+		}catch(Exception e){}
 	}
 }
