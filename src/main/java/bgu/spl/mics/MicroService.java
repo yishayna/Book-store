@@ -31,7 +31,6 @@ public abstract class MicroService implements Runnable {
     private Vector<Pair<Class,Callback>> callBacks;
 
 
-
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
@@ -41,6 +40,9 @@ public abstract class MicroService implements Runnable {
         this. mBus=MessageBusImpl.getInstance();
         messagesQueue=mBus.getMessageQueue(this);
         this.callBacks=new Vector<>();
+        //?
+        mBus.register(this);
+
     }
 
     /**
