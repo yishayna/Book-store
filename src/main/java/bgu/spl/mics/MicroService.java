@@ -1,8 +1,6 @@
 package bgu.spl.mics;
 
-import javafx.util.Pair;
-import java.util.Vector;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.HashMap;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -27,8 +25,7 @@ public abstract class MicroService implements Runnable {
     private boolean terminated = false;
     private final String name;
     private  MessageBusImpl mBus;
-    private  volatile LinkedBlockingQueue<Message> messagesQueue;
-    private Vector<Pair<Class,Callback>> callBacks;
+    private HashMap<Class,Callback> callBacks;
 
 
     /**
@@ -38,11 +35,7 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
         this.name = name;
         this. mBus=MessageBusImpl.getInstance();
-        messagesQueue=mBus.getMessageQueue(this);
-        this.callBacks=new Vector<>();
-        //?
-        mBus.register(this);
-
+        this.callBacks=new HashMap<>();
     }
 
     /**
@@ -67,8 +60,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        Pair<Class,Callback> callbackPair=new Pair<>(type,callback);
-        callBacks.add(callbackPair);
+        callBacks.put(type,callback);
         mBus.subscribeEvent(type,this);
     }
 
@@ -93,8 +85,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-        Pair<Class,Callback> callbackPair=new Pair<>(type,callback);
-        callBacks.add(callbackPair);
+        callBacks.put(type,callback);
         mBus.subscribeBroadcast(type,this);
     }
 
@@ -160,14 +151,24 @@ public abstract class MicroService implements Runnable {
     }
 
     /**
-     * The entry point of the micro-service. TODO: you must complete this code
+     * The entry point of the micro-service.
      * otherwise you will end up in an infinite loop.
      */
-    @Override
+    @Override  //TODO: you must complete this code
     public final void run() {
+        mBus.register(this);
         initialize();
         while (!terminated) {
-            System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
+            try {
+                Message message=mBus.awaitMessage(this);
+                Callback callback=callBacks.get(message);
+                //callback.call(    );
+
+
+            } catch (InterruptedException e) {
+                //TODO
+            }
+
         }
     }
 

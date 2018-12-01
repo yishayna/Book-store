@@ -17,11 +17,14 @@ public class MessageBusImpl implements MessageBus {
 	private static MessageBusImpl instance = null;
 	private ConcurrentHashMap <MicroService, Pair<Vector<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> serviceQueue;
 	private ConcurrentHashMap <MicroService, LinkedBlockingQueue<Message>>messagesQueue;
+	private ConcurrentHashMap <Class<? extends Event>, LinkedBlockingQueue<MicroService>> roundRobin;
 	private ConcurrentHashMap <Event,Future> future;
 
 	private MessageBusImpl(){
 		this.serviceQueue=new ConcurrentHashMap<>();
 		this.future=new ConcurrentHashMap<>();
+		this.messagesQueue=new ConcurrentHashMap<>();
+		this.roundRobin=new ConcurrentHashMap<>();
 	}
 
 	public static MessageBusImpl getInstance() {
@@ -35,6 +38,10 @@ public class MessageBusImpl implements MessageBus {
 	@Override	//Done
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		serviceQueue.get(m).getValue().add(type);
+		if(!roundRobin.containsKey(type))
+			roundRobin.put(type,new LinkedBlockingQueue<>());
+		try { roundRobin.get(type).put(m);}
+		catch (InterruptedException e){}
 	}
 
 	@Override	//Done
@@ -45,6 +52,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override	// TO DO: we need to notify the Message-Bus that the event was handled
 	public <T> void complete(Event<T> e, T result) {
 		future.get(e).resolve(result);
+
 
 	}
 
@@ -59,12 +67,15 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 
-	@Override
+	@Override	//Done
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> future=new Future<>();
 		this.future.put(e,future);
-
-
+		try {
+			MicroService m=roundRobin.get(e).take();
+			roundRobin.get(e).put(m);
+			messagesQueue.get(m).put(e); }
+		catch (InterruptedException exception){}
 
 		return future;
 	}
@@ -75,22 +86,21 @@ public class MessageBusImpl implements MessageBus {
 		Vector<Class<? extends Broadcast>> broadcasts =new Vector<>();
 		Pair<Vector<Class<? extends Broadcast>>,Vector<Class<? extends Event>> > pair=new Pair<>(broadcasts,events);
 		serviceQueue.put(m, pair);
+		messagesQueue.put(m,new LinkedBlockingQueue<>());
+
 	}
 
 	@Override	//Done
 	public void unregister(MicroService m) {
 		serviceQueue.remove(m);
+		messagesQueue.remove(m);
 	}
 
-	@Override
-	public Message awaitMessage(MicroService m) throws InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
+	@Override	//Done?
+	public synchronized Message awaitMessage(MicroService m) throws InterruptedException {
+		LinkedBlockingQueue<Message> queue=messagesQueue.get(m);
+		return queue.take();
 	}
 
-
-	public LinkedBlockingQueue<Message> getMessageQueue(MicroService m){
-		return messagesQueue.get(m);
-	}
 
 }
