@@ -52,7 +52,7 @@ public class MessageBusImpl implements MessageBus {
 	public void sendBroadcast(Broadcast b) {
 		//send the message to all other subscribers of this broadcast
 		for(Map.Entry<MicroService, Pair<Vector<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> p	:serviceQueue.entrySet()){
-			if (p.getValue().getKey().contains(b)){  //the micro-service p.getKey() subscribing this type
+			if (p.getValue().getKey().contains(b.getClass())){  //the micro-service p.getKey() subscribing this type
 				messagesQueue.get(p.getValue()).add((b));
 			}
 		}

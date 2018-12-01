@@ -1,5 +1,8 @@
 package bgu.spl.mics;
 
+import javafx.util.Pair;
+
+import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -26,6 +29,7 @@ public abstract class MicroService implements Runnable {
     private final String name;
     private  MessageBusImpl mBus;
     private  volatile LinkedBlockingQueue<Message> messagesQueue;
+    private Vector<Pair<Class,Callback>> callBacks;
 
 
 
@@ -37,6 +41,7 @@ public abstract class MicroService implements Runnable {
         this.name = name;
         this. mBus=MessageBusImpl.getInstance();
         messagesQueue=mBus.getMessageQueue(this);
+        this.callBacks=new Vector<>();
     }
 
     /**
@@ -61,7 +66,9 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        //TODO: implement this.
+        Pair<Class,Callback> callbackPair=new Pair<>(type,callback);
+        callBacks.add(callbackPair);
+        mBus.subscribeEvent(type,this);
     }
 
     /**
@@ -101,8 +108,7 @@ public abstract class MicroService implements Runnable {
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-        //TODO: implement this.
-        return null; //TODO: delete this line :)
+        return mBus.sendEvent(e);
     }
 
     /**
@@ -112,7 +118,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-        //TODO: implement this.
+        mBus.sendBroadcast(b);
     }
 
     /**
@@ -126,7 +132,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-        //TODO: implement this.
+        mBus.complete(e,result);
     }
 
     /**
