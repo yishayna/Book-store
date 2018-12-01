@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
 import javafx.util.Pair;
-
 import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -92,7 +91,9 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-        //TODO: implement this.
+        Pair<Class,Callback> callbackPair=new Pair<>(type,callback);
+        callBacks.add(callbackPair);
+        mBus.subscribeBroadcast(type,this);
     }
 
     /**
