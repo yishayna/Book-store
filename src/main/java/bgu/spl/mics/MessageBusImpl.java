@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
 import javafx.util.Pair;
-
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
