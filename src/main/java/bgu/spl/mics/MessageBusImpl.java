@@ -61,8 +61,12 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
+		Future<T> future=new Future<>();
+		this.future.put(e,future);
 
-		return null;
+
+
+		return future;
 	}
 
 	@Override	//Done
@@ -83,6 +87,7 @@ public class MessageBusImpl implements MessageBus {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 	public LinkedBlockingQueue<Message> getMessageQueue(MicroService m){
 		return messagesQueue.get(m);

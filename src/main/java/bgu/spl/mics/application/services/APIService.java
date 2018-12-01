@@ -14,7 +14,7 @@ import bgu.spl.mics.MicroService;
 public class APIService extends MicroService{
 
 	public APIService() {
-		super("Change_This_Name");
+		super("APIService");
 		// TODO Implement this
 	}
 

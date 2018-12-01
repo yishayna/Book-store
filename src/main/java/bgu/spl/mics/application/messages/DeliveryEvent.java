@@ -1,4 +1,6 @@
 package bgu.spl.mics.application.messages;
 
-public class DeliveryEvent {
+import bgu.spl.mics.Event;
+
+public class DeliveryEvent implements Event {
 }

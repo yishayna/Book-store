@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.messages;
 
-public class BookOrderEvent {
+import bgu.spl.mics.Event;
+
+public class BookOrderEvent implements Event {
+
 
 }
