@@ -24,7 +24,7 @@ public abstract class MicroService implements Runnable {
 
     private boolean terminated = false;
     private final String name;
-    private  MessageBusImpl mBus=MessageBusImpl.getInstance();
+    private  MessageBusImpl mBus;
     private  volatile LinkedBlockingQueue<Message> messagesQueue;
 
 
@@ -35,6 +35,8 @@ public abstract class MicroService implements Runnable {
      */
     public MicroService(String name) {
         this.name = name;
+        this. mBus=MessageBusImpl.getInstance();
+        messagesQueue=mBus.getMessageQueue(this);
     }
 
     /**

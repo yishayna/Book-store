@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
 import javafx.util.Pair;
-
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +16,7 @@ public class MessageBusImpl implements MessageBus {
 
 	private static MessageBusImpl instance = null;
 	private ConcurrentHashMap <MicroService, Pair<Vector<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> serviceQueue;
-	private ConcurrentHashMap <MicroService, LinkedBlockingQueue<Event>> eventQueue;
+	private ConcurrentHashMap <MicroService, LinkedBlockingQueue<Message>>messagesQueue;
 	private ConcurrentHashMap <Event,Future> future;
 
 	private MessageBusImpl(){
@@ -49,17 +48,14 @@ public class MessageBusImpl implements MessageBus {
 
 	}
 
-	@Override
+	@Override	//Done
 	public void sendBroadcast(Broadcast b) {
 		//send the message to all other subscribers of this broadcast
 		for(Map.Entry<MicroService, Pair<Vector<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> p	:serviceQueue.entrySet()){
 			if (p.getValue().getKey().contains(b)){  //the micro-service p.getKey() subscribing this type
-				 //?
-
+				messagesQueue.get(p.getValue()).add((b));
 			}
-
 		}
-
 	}
 
 
@@ -88,6 +84,8 @@ public class MessageBusImpl implements MessageBus {
 		return null;
 	}
 
-	
+	public LinkedBlockingQueue<Message> getMessageQueue(MicroService m){
+		return messagesQueue.get(m);
+	}
 
 }
