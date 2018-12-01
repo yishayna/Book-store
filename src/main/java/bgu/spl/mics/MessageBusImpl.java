@@ -16,7 +16,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MessageBusImpl implements MessageBus {
 
 	private static MessageBusImpl instance = null;
-	private ConcurrentHashMap <MicroService, Pair<LinkedBlockingQueue<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> serviceQueue;
+	private ConcurrentHashMap <MicroService, Pair<Vector<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> serviceQueue;
+	private ConcurrentHashMap <MicroService, LinkedBlockingQueue<Event>> eventQueue;
 	private ConcurrentHashMap <Event,Future> future;
 
 	private MessageBusImpl(){
@@ -50,11 +51,10 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		//add the message to all other subscribers of this broadcast
-		for(Map.Entry<MicroService, Pair<LinkedBlockingQueue<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> p	:serviceQueue.entrySet()){
-			if (p.getValue().getKey().contains(b)){
-				p.getKey();
-
+		//send the message to all other subscribers of this broadcast
+		for(Map.Entry<MicroService, Pair<Vector<Class<? extends Broadcast>> ,Vector<Class<? extends Event>>>> p	:serviceQueue.entrySet()){
+			if (p.getValue().getKey().contains(b)){  //the micro-service p.getKey() subscribing this type
+				 //?
 
 			}
 
@@ -72,8 +72,8 @@ public class MessageBusImpl implements MessageBus {
 	@Override	//Done
 	public void register(MicroService m) {
 		Vector<Class<? extends Event>> events=new Vector<>();
-		LinkedBlockingQueue<Class<? extends Broadcast>> broadcasts =new LinkedBlockingQueue<>();
-		Pair<LinkedBlockingQueue<Class<? extends Broadcast>>,Vector<Class<? extends Event>> > pair=new Pair<>(broadcasts,events);
+		Vector<Class<? extends Broadcast>> broadcasts =new Vector<>();
+		Pair<Vector<Class<? extends Broadcast>>,Vector<Class<? extends Event>> > pair=new Pair<>(broadcasts,events);
 		serviceQueue.put(m, pair);
 	}
 
