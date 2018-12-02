@@ -32,9 +32,7 @@ public class InventoryTest {
     public void load() {
         try {
             test.load(inventoryInfos);
-            assert (test.checkAvailabiltyAndGetPrice("name1")==1);
-            test.take("name1");
-            assert (test.checkAvailabiltyAndGetPrice("name1")==-1);
+            assertEquals(test.getarray(),inventoryInfos);
         } catch (Exception ex) {
             Assert.fail();
         }
@@ -55,7 +53,7 @@ public class InventoryTest {
     public void checkAvailabiltyAndGetPrice() {
         try {
             assertEquals(test.checkAvailabiltyAndGetPrice("name2"), 2);
-            assertEquals(test.take("name4"),-1);
+            assertEquals(test.checkAvailabiltyAndGetPrice("name4"),-1);
         }
         catch (Exception ex) {
             Assert.fail();

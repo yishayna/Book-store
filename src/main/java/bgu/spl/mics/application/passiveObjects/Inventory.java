@@ -105,5 +105,8 @@ public class Inventory {
 			fos.close();
 		}catch(Exception e){}
 	}
+	public BookInventoryInfo[] getarray(){
+		return this.inventoryInfo;
+	}
 
 }

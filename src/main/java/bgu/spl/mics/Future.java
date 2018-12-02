@@ -31,6 +31,7 @@ public class Future<T> {
 	public synchronized T get() {
 		while (result == null) {
 			try {
+				System.out.println("yana");
 				this.wait();
 			} catch (InterruptedException e) {}
 		}
