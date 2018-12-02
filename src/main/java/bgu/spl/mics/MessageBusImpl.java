@@ -73,8 +73,9 @@ public class MessageBusImpl implements MessageBus {
 		try {
 			MicroService m=roundRobin.get(e).take();
 			roundRobin.get(e).put(m);
-			messagesQueue.get(m).put(e); }
-		catch (InterruptedException exception){}
+			messagesQueue.get(m).put(e);
+		}
+		catch (Exception exception){ return  null;}
 
 		return future;
 	}
