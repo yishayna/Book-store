@@ -93,6 +93,11 @@ public class MessageBusImpl implements MessageBus {
 	public void unregister(MicroService m) {
 		serviceQueue.remove(m);
 		messagesQueue.remove(m);
+		for (LinkedBlockingQueue<MicroService> queue: roundRobin.values()) {
+			if(queue.contains(m)){
+				queue.remove(m);
+			}
+		}
 	}
 
 	@Override	//Done?
