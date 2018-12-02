@@ -154,21 +154,17 @@ public abstract class MicroService implements Runnable {
      * The entry point of the micro-service.
      * otherwise you will end up in an infinite loop.
      */
-    @Override  //TODO: you must complete this code
+    @Override  //TODO: callback call
     public final void run() {
         mBus.register(this);
         initialize();
         while (!terminated) {
             try {
                 Message message=mBus.awaitMessage(this);
-                Callback callback=callBacks.get(message);
-                //callback.call(    );
+                Callback<Message> callback=callBacks.get(message);
+                callback.call(message);
 
-
-            } catch (InterruptedException e) {
-                //TODO
-            }
-
+            } catch (InterruptedException e) {}
         }
     }
 

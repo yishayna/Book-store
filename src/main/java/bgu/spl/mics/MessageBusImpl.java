@@ -49,11 +49,10 @@ public class MessageBusImpl implements MessageBus {
 		serviceQueue.get(m).getKey().add(type);
 	}
 
-	@Override	// TO DO: we need to notify the Message-Bus that the event was handled
+	@Override	//Done
 	public <T> void complete(Event<T> e, T result) {
 		future.get(e).resolve(result);
-
-
+		future.remove(e);
 	}
 
 	@Override	//Done
